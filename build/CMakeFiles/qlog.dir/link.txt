@@ -1,0 +1,2 @@
+/usr/bin/ar qc libqlog.a  CMakeFiles/qlog.dir/format.cc.o CMakeFiles/qlog.dir/log_msg.cc.o CMakeFiles/qlog.dir/qlog.cc.o CMakeFiles/qlog.dir/test_log.cc.o CMakeFiles/qlog.dir/timestamp.cc.o CMakeFiles/qlog.dir/util.cc.o
+/usr/bin/ranlib libqlog.a

@@ -1,0 +1,1 @@
+/usr/bin/c++  -ggdb -Wall -Werror -Wno-unused-function -std=c++11 -O3  -rdynamic CMakeFiles/test_log.dir/test_log.cc.o  -o bin/test_log  libqlog.a -lpthread 

@@ -1,0 +1,4 @@
+/home/wsl/qlog/build/CMakeFiles/edit_cache.dir
+/home/wsl/qlog/build/CMakeFiles/test_log.dir
+/home/wsl/qlog/build/CMakeFiles/rebuild_cache.dir
+/home/wsl/qlog/build/CMakeFiles/qlog.dir
