@@ -35,7 +35,11 @@ uint32_t RingBuffer::read(char* to, uint32_t n) {
 }
 
 void RingBuffer::wrtie(const char* from, uint32_t n) {
-    while (getUnusedBytes() < n);
+    // while in call usleep in a coroutine, it will not 
+    // sleep and switch thread context.
+    while (getUnusedBytes() < n) {
+        usleep(50);
+    }
 
     uint32_t offset_to_end = std::min(n, kBufferSize - offsetOfPos(write_pos_));
     memcpy(buf_ + offsetOfPos(write_pos_), from, offset_to_end);
