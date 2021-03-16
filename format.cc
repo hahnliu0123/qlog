@@ -1,10 +1,12 @@
 #include "format.h"
 #include "util.h"
 
+#include "reyao/coroutine.h"
+
 namespace qlog {
 
 class LevelFmtItem : public LogFormatter::FmtItem {
- public:
+public:
     explicit LevelFmtItem(const std::string& str = "") {}
     void format(LogMsg& msg) override { 
         msg << LogLevelToString(msg.getLevel());
@@ -12,7 +14,7 @@ class LevelFmtItem : public LogFormatter::FmtItem {
 };
 
 class DateTimeFmtItem : public LogFormatter::FmtItem {
- public:
+public:
     explicit DateTimeFmtItem(const std::string& str = "") {}
     void format(LogMsg& msg) override {   
         msg << detail::TimeStamp::Now().format();
@@ -20,7 +22,7 @@ class DateTimeFmtItem : public LogFormatter::FmtItem {
 };
 
 class ThreadIdFmtItem : public LogFormatter::FmtItem {
- public:
+public:
     explicit ThreadIdFmtItem(const std::string& str = "") {}
         void format(LogMsg& msg) override {
         msg << detail::Gettid();
@@ -28,7 +30,7 @@ class ThreadIdFmtItem : public LogFormatter::FmtItem {
 };
 
 class FileNameFmtItem : public LogFormatter::FmtItem {
- public:
+public:
     explicit FileNameFmtItem(const std::string& str = "") {}
     void format(LogMsg& msg) override {
         msg << msg.getFile();
@@ -36,7 +38,7 @@ class FileNameFmtItem : public LogFormatter::FmtItem {
 };
 
 class FunctionFmtItem : public LogFormatter::FmtItem {
- public:
+public:
     explicit FunctionFmtItem(const std::string& str = "") {}
     void format(LogMsg& msg) override {
         msg << msg.getFunction();
@@ -44,7 +46,7 @@ class FunctionFmtItem : public LogFormatter::FmtItem {
 };
 
 class LineFmtItem : public LogFormatter::FmtItem {
- public:
+public:
     explicit LineFmtItem(const std::string& str = "") {}
     void format(LogMsg& msg) override {
         msg << msg.getLine();
@@ -52,7 +54,7 @@ class LineFmtItem : public LogFormatter::FmtItem {
 };
 
 class TableFmtItem : public LogFormatter::FmtItem {
- public:
+public:
     explicit TableFmtItem(const std::string& str = "") {}
     void format(LogMsg& msg) override {
         msg << "\t";
@@ -60,7 +62,7 @@ class TableFmtItem : public LogFormatter::FmtItem {
 };
 
 class StringFmtItem : public LogFormatter::FmtItem {
- public:
+public:
     explicit StringFmtItem(const std::string& str):str_(str) {}
     void format(LogMsg& msg) override {
         msg << str_;
@@ -69,6 +71,15 @@ class StringFmtItem : public LogFormatter::FmtItem {
     std::string str_;
 };
 
+class CoroutineIdFmtItem : public LogFormatter::FmtItem {
+public:
+    explicit CoroutineIdFmtItem(const std::string& str = "") {}
+    void format(LogMsg& msg) override {
+        msg << reyao::Coroutine::GetCoroutineId();
+    }
+};
+
+// a format string should start with '%', end with a non-alpha char.
 void LogFormatter::init() {   
     items_.clear();
     std::vector<std::pair<std::string, int>> vec;
@@ -129,6 +140,7 @@ void LogFormatter::init() {
         XX(func, FunctionFmtItem),
         XX(name, LineFmtItem),
         XX(t, TableFmtItem),
+        XX(cid, CoroutineIdFmtItem),
 
 #undef XX
     };

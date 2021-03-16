@@ -41,7 +41,8 @@ public:
     const std::vector<FmtItem::SPtr> getFormatItem() const { return items_; }
     
 private:
-    LogFormatter(const std::string& pattern = "%time %file:%line %func() "): pattern_(pattern) {
+    LogFormatter(const std::string& pattern = "%time %file:%line %func() c_id[%cid] ")
+        : pattern_(pattern) {
         init();
     }
     ~LogFormatter() = default;
