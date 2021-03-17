@@ -34,9 +34,9 @@ uint32_t RingBuffer::read(char* to, uint32_t n) {
     return readable;
 }
 
-void RingBuffer::wrtie(const char* from, uint32_t n) {
+void RingBuffer::write(const char* from, uint32_t n) {
     while (getUnusedBytes() < n);
-
+    assert(buf_);
     uint32_t offset_to_end = std::min(n, kBufferSize - offsetOfPos(write_pos_));
     memcpy(buf_ + offsetOfPos(write_pos_), from, offset_to_end);
     memcpy(buf_, from + offset_to_end, n - offset_to_end);
@@ -94,7 +94,7 @@ QLog::~QLog() {
     free(double_buf_);
 
     for (auto& buf : thread_buffers_) {
-        free(buf);
+        delete buf;
     }
 
 }
@@ -158,7 +158,7 @@ RingBuffer* QLog::buffer() {
     static thread_local RingBuffer* buf = nullptr;
     if (!buf) {
         std::lock_guard<std::mutex> lock(buffer_mtx_);
-        buf = static_cast<RingBuffer*>(malloc(sizeof(RingBuffer)));
+        buf = new RingBuffer;
         thread_buffers_.push_back(buf);
     }
     return buf;

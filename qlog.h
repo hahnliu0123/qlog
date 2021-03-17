@@ -51,7 +51,14 @@ const char* LogLevelToString(LogLevel level);
 class RingBuffer {
 public:
     RingBuffer()
-        : write_pos_(0), read_pos_(0), last_log_pos_(0) {}
+        : write_pos_(0), read_pos_(0), last_log_pos_(0) {
+        buf_ = (char*)malloc(kBufferSize);    
+        assert(buf_);
+    }
+
+    ~RingBuffer() {
+        free(buf_);
+    }
 
     uint32_t offsetOfPos(uint32_t pos) const { return pos & (kBufferSize - 1); }
 
@@ -74,14 +81,14 @@ public:
     }
 
     uint32_t read(char* to, uint32_t n);
-    void wrtie(const char* from, uint32_t n);
+    void write(const char* from, uint32_t n);
 
 private:
     static const uint32_t kBufferSize = 1 * 1024 * 1024; // 1M
     uint32_t write_pos_;
     uint32_t read_pos_;
     uint32_t last_log_pos_;
-    char buf_[kBufferSize];
+    char* buf_{nullptr};
 };
 
 static std::unordered_map<std::string, LogAppender*>
@@ -135,7 +142,7 @@ public:
     void setAppender(LogAppender* appender) { appender_ = appender; }
 
     void write(const char* data, uint32_t n) {
-        buffer()->wrtie(data, static_cast<uint32_t>(n));
+        buffer()->write(data, static_cast<uint32_t>(n));
     }
 
     void incementLastLogPos(uint32_t n) {
